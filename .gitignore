@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.env
+secrets.toml
+.streamlit/secrets.toml
+ferry_processed_ml.csv
+Ferry_Analytics_Deck.pptx
+Toronto Island Ferry Tickets.csv

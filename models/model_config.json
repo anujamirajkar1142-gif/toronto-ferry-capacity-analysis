@@ -1,0 +1,28 @@
+{
+    "final_k": 2,
+    "silhouette_score": 0.22801090121241469,
+    "ml_features": [
+        "Log_Sales",
+        "Log_Redemptions",
+        "Log_Total_Load",
+        "Stable_Redemption_Ratio",
+        "Abs_Sales_Redemption_Gap",
+        "Hour_Sin",
+        "Hour_Cos",
+        "Month_Sin",
+        "Month_Cos",
+        "Is_Weekend"
+    ],
+    "cluster_names": {
+        "0": "Low Activity",
+        "1": "High Activity"
+    },
+    "high_pressure_threshold": 494.0,
+    "low_activity_threshold": 2.0,
+    "anomaly_contamination": 0.03,
+    "efficiency_score_definition": {
+        "activity_balance_weight": 0.45,
+        "consistency_weight": 0.35,
+        "anomaly_status_weight": 0.2
+    }
+}

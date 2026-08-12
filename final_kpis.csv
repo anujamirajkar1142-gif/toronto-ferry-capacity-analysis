@@ -1,0 +1,13 @@
+KPI,Value
+Total Observations,261538.0
+Total Sales,12972051.0
+Total Redemptions,12785293.0
+Average Activity Load,98.48
+Maximum Activity Load,14445.0
+High Pressure Intervals,13109.0
+Low Activity Intervals,27852.0
+ML Anomalies,7847.0
+Anomaly Rate (%),3.0
+Average Efficiency Proxy,75.82
+Final K,2.0
+Silhouette Score,0.228
