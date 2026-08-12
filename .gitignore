@@ -5,6 +5,5 @@ __pycache__/
 .env
 secrets.toml
 .streamlit/secrets.toml
-ferry_processed_ml.csv
 Ferry_Analytics_Deck.pptx
 Toronto Island Ferry Tickets.csv
