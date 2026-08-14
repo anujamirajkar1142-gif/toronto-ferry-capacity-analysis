@@ -8,21 +8,12 @@ import json
 from pathlib import Path
 
 
-# ============================================================
-# PAGE CONFIGURATION
-# ============================================================
-
 st.set_page_config(
     page_title="Toronto Ferry Analytics",
     page_icon="⛴️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-
-# ============================================================
-# PATHS
-# ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -39,13 +30,6 @@ ISOLATION_FILE = MODEL_DIR / "isolation_forest.pkl"
 SCALER_FILE = MODEL_DIR / "scaler.pkl"
 CONFIG_FILE = MODEL_DIR / "model_config.json"
 
-
-# ============================================================
-# CIVIC / GOVERNMENT-STYLE THEME
-# ============================================================
-# Palette modeled after municipal information portals:
-# deep navy header, restrained blues/greys, a single gold accent.
-# No gradients, no glassmorphism, no neon.
 
 NAVY = "#14315C"
 NAVY_DARK = "#0D2440"
@@ -330,6 +314,20 @@ st.markdown(
         text-align: left;
     }}
 
+    /* ---------- Multiselect filter tags (sidebar) ---------- */
+    span[data-baseweb="tag"] {{
+        background-color: {NAVY} !important;
+        border-color: {NAVY} !important;
+    }}
+
+    span[data-baseweb="tag"]:hover {{
+        background-color: {NAVY_DARK} !important;
+    }}
+
+    span[data-baseweb="tag"] svg {{
+        fill: #FFFFFF !important;
+    }}
+
     /* Tame default Streamlit chrome (keep header visible so the
        sidebar collapse/expand arrow stays usable) */
     #MainMenu {{visibility: hidden;}}
@@ -446,10 +444,6 @@ def style_fig(fig):
     return fig
 
 
-# ============================================================
-# LOAD DATA
-# ============================================================
-
 df = load_data()
 
 kpi_data = load_optional_csv(KPI_FILE)
@@ -460,9 +454,7 @@ models = load_models()
 model_config = load_config()
 
 
-# ============================================================
-# DERIVED COLUMNS
-# ============================================================
+
 
 if "Total_Activity_Load" not in df.columns:
     if "Sales Count" in df.columns and "Redemption Count" in df.columns:
@@ -482,17 +474,14 @@ if "Operational_Status" not in df.columns:
             default="Normal"
         )
 
-# Redemption Pressure Ratio: how much redemption activity is occurring
-# relative to sales in the same interval.
+
 if "Redemption_Pressure_Ratio" not in df.columns:
     if "Sales Count" in df.columns and "Redemption Count" in df.columns:
         df["Redemption_Pressure_Ratio"] = (
             df["Redemption Count"] / (df["Sales Count"] + 1)
         )
 
-# Operational Load Index (OLI): activity load normalized to a 0-100 scale
-# against the full dataset's observed range, so it stays comparable
-# regardless of how the person filters the view.
+
 if "Operational_Load_Index" not in df.columns:
     if "Total_Activity_Load" in df.columns:
         _oli_min = df["Total_Activity_Load"].min()
@@ -502,10 +491,6 @@ if "Operational_Load_Index" not in df.columns:
             (df["Total_Activity_Load"] - _oli_min) / _oli_range
         ) * 100
 
-
-# ============================================================
-# HEADER (civic-portal style)
-# ============================================================
 
 st.markdown(
     f"""
@@ -536,10 +521,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-# ============================================================
-# SIDEBAR — FILTERS
-# ============================================================
 
 st.sidebar.markdown("### Filters")
 st.sidebar.caption("Refine the dataset used across this analysis.")
@@ -573,7 +554,7 @@ if "Season" in filtered_df.columns:
     if selected_seasons:
         filtered_df = filtered_df[filtered_df["Season"].isin(selected_seasons)]
 
-# Weekend filter
+
 if "Is_Weekend" in filtered_df.columns:
     weekend_options = st.sidebar.multiselect(
         "Day Type", ["Weekday", "Weekend"], default=["Weekday", "Weekend"]
@@ -584,7 +565,7 @@ if "Is_Weekend" in filtered_df.columns:
         else:
             filtered_df = filtered_df[filtered_df["Is_Weekend"] == 0]
 
-# Operational status filter
+
 if "Operational_Status" in filtered_df.columns:
     statuses = sorted(filtered_df["Operational_Status"].dropna().unique().tolist())
     selected_status = st.sidebar.multiselect("Operational Status", statuses, default=statuses)
@@ -594,10 +575,6 @@ if "Operational_Status" in filtered_df.columns:
 st.sidebar.divider()
 st.sidebar.caption(f"Records in view: {len(filtered_df):,}")
 
-
-# ============================================================
-# PAGE TITLE + "IN THIS ANALYSIS" LAYOUT
-# ============================================================
 
 main_col, nav_col = st.columns([3.2, 1], gap="large")
 
@@ -644,9 +621,7 @@ with nav_col:
     )
 
 
-# ============================================================
-# KEY FINDINGS — OFFICIAL KPIs
-# ============================================================
+
 
 section_title(
     "Key Findings",
@@ -825,10 +800,6 @@ for col, (label, value) in zip(vol_cols, vol_items):
         )
 
 
-# ============================================================
-# CAPACITY & UTILIZATION
-# ============================================================
-
 section_title(
     "Capacity &amp; Utilization",
     anchor_id="capacity",
@@ -920,10 +891,6 @@ if sales_col and redemption_col:
     fig.update_layout(xaxis_title="Sales Count", yaxis_title="Redemption Count")
     st.plotly_chart(style_fig(fig), use_container_width=True)
 
-
-# ============================================================
-# TIME & SEASONAL ANALYSIS
-# ============================================================
 
 section_title(
     "Time &amp; Seasonal Analysis",
@@ -1031,10 +998,6 @@ if "Season" in filtered_df.columns:
     st.markdown('<div class="gov-table-note">Table: seasonal summary statistics</div>', unsafe_allow_html=True)
     st.dataframe(season, use_container_width=True, hide_index=True)
 
-
-# ============================================================
-# OPERATIONAL EFFICIENCY
-# ============================================================
 
 section_title(
     "Operational Efficiency",
@@ -1230,10 +1193,6 @@ if "Timestamp" in filtered_df.columns and "Operational_Status" in filtered_df.co
         )
 
 
-# ============================================================
-# MACHINE LEARNING
-# ============================================================
-
 section_title(
     "Machine Learning",
     anchor_id="ml",
@@ -1331,10 +1290,6 @@ st.markdown(
 )
 
 
-# ============================================================
-# RECOMMENDATIONS
-# ============================================================
-
 section_title(
     "Operational Recommendations",
     anchor_id="recommendations",
@@ -1386,11 +1341,6 @@ for title, body in recommendations:
         unsafe_allow_html=True
     )
 
-
-# ============================================================
-# DATA & METHODOLOGY
-# ============================================================
-
 section_title(
     "Data &amp; Methodology",
     anchor_id="methodology",
@@ -1424,10 +1374,6 @@ st.markdown(
 with st.expander("View underlying data"):
     st.dataframe(filtered_df.head(500), use_container_width=True, hide_index=True)
 
-
-# ============================================================
-# FOOTER
-# ============================================================
 
 st.markdown(
     """
